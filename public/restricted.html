@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AREA RESTRINGIDA</title>
+</head>
+<body>
+  <h1>BIENVENIDO</h1>
+  <p>HAS ACCEDIDO CORRECTAMENTE AL AREA SECRETA</p>
+  <p id="agentEmail">Cargando correo del agente...</p>
+  <script>
+    // Verificar token en sessionStorage al cargar la página
+    const token = sessionStorage.getItem('authToken');
+    if (!token) {
+      // Redirigir a la página de inicio de sesión si no hay token
+      window.location.href = '/';
+    } else {
+      // Solicitar datos del usuario al servidor
+      fetch(`/user-info?token=${encodeURIComponent(token)}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Fallo al obtener info de usuario');
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('agentEmail').textContent = `${data.email}`;
+        })
+        .catch(error => {
+          console.error('Error al obtener los datos:', error);
+          window.location.href = '/'; // Redirigir si hay un error al obtener los datos
+        });
+    }
+  </script>
+</body>
+</html>
